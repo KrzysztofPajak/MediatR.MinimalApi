@@ -113,9 +113,12 @@ namespace MediatR.MinimalApi.Endpoints
             }
             return null;
         }
+
         private static async ValueTask<object?> CreateFromBodyRequest(Type requestType, HttpRequest httpRequest)
         {
-            return httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
+            var request = httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
+            PopulateRequestFromQuery(request, httpRequest.Query);
+            return request;
         }
 
         private static void PopulateRequestFromQuery(object? request, IQueryCollection query)
@@ -127,11 +130,10 @@ namespace MediatR.MinimalApi.Endpoints
             {
                 if (property.GetCustomAttribute<FromQueryAttribute>() is not null && query.TryGetValue(property.Name, out var value))
                 {
-                    var convertedValue = Convert.ChangeType(value.ToString(), property.PropertyType);
+                    var convertedValue = ConvertToType(value.ToString(), property.PropertyType);
                     property.SetValue(request, convertedValue);
                 }
-            }
-
+            }            
         }
         private static object? ConvertToType(string value, Type type)
         {
