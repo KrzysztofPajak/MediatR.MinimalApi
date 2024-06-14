@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using MediatR.MinimalApi.Attributes;
 using WebApplication.Models;
 
 namespace WebApplication.Commands.Users;
