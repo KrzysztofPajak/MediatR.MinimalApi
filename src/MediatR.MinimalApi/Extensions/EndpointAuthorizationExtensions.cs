@@ -9,14 +9,19 @@ internal static class EndpointAuthorizationExtensions
     public static RouteHandlerBuilder AddAuthorization(this RouteHandlerBuilder builder, Type handlerType)
     {
         var authorizeAttributes = handlerType.GetCustomAttributes()
-                .Where(attr => attr.GetType() == typeof(AuthorizeAttribute))
+                .Where(attr => attr.GetType() == typeof(AuthorizeAttribute) || attr.GetType() == typeof(AllowAnonymousAttribute))
                 .ToList();
 
         foreach (var authorizeAttribute in authorizeAttributes)
         {
-            if (authorizeAttribute is AuthorizeAttribute authorize)
+            switch (authorizeAttribute)
             {
-                builder.RequireAuthorization(authorize);
+                case AuthorizeAttribute authorize:
+                    builder.RequireAuthorization(authorize);
+                    break;
+                case AllowAnonymousAttribute:
+                    builder.AllowAnonymous();
+                    break;
             }
         }
 
