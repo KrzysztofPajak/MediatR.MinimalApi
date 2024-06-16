@@ -15,34 +15,36 @@ namespace MediatR.MinimalApi.Endpoints
 
         internal static void MediatREndpoint(this IEndpointRouteBuilder endpoints, IEnumerable<Type> handlerTypes)
         {
-            foreach (var handler in handlerTypes)
+            foreach (var handlerType in handlerTypes)
             {
-                var attribute = handler.GetCustomAttribute<EndpointAttribute>();
+                var attribute = handlerType.GetCustomAttribute<EndpointAttribute>();
                 if (attribute == null) continue;
 
                 var route = attribute.Route;
                 var httpMethod = attribute.Method;
-                var responseType = handler.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)).GetGenericArguments()[0];
+                var responseType = handlerType.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)).GetGenericArguments()[0];
                 
 
                 switch (httpMethod)
                 {
                     case Models.HttpMethod.GET:
-                        endpoints.MapGet(route, (Delegate)CreateRequestDelegate(handler, httpMethod))
-                            .WithOpenApiDescription(handler);
+                        endpoints.MapGet(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
+                            .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.POST:
-                        endpoints.MapPost(route, (Delegate)CreateRequestDelegate(handler, httpMethod))                            
-                            .WithOpenApiDescription(handler);
+                        endpoints.MapPost(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
+                            .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.PUT:
-                        endpoints.MapPut(route, (Delegate)CreateRequestDelegate(handler, httpMethod));
+                        endpoints.MapPut(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
                         break;
                     case Models.HttpMethod.DELETE:
-                        endpoints.MapDelete(route, (Delegate)CreateRequestDelegate(handler, httpMethod));
+                        endpoints.MapDelete(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
                         break;
                     case Models.HttpMethod.PATCH:
-                        endpoints.MapPatch(route, (Delegate)CreateRequestDelegate(handler, httpMethod));
+                        endpoints.MapPatch(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
                         break;
                     default:
                         throw new NotSupportedException($"Http method {httpMethod} is not supported.");
