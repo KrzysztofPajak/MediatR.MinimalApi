@@ -1,5 +1,6 @@
 using MediatR.MinimalApi.Extensions;
 using MediatRSampleWebApplication.EndpointFilters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,12 @@ var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+        options => builder.Configuration.Bind("JwtSettings", options));
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<ValidationFilter>();
 
