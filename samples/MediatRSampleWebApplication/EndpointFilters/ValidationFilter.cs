@@ -22,9 +22,9 @@ namespace MediatRSampleWebApplication.EndpointFilters
             });
 
             var validationResults = new List<ValidationResult>();
-            var validationContext = new ValidationContext(requestInstance);
+            var validationContext = new ValidationContext(requestInstance!);
 
-            if (!Validator.TryValidateObject(requestInstance, validationContext, validationResults, true))
+            if (!Validator.TryValidateObject(requestInstance!, validationContext, validationResults, true))
             {
                 return Results.BadRequest(validationResults);
             }
