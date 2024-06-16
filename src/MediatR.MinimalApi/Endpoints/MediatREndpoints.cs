@@ -22,36 +22,45 @@ namespace MediatR.MinimalApi.Endpoints
 
                 var route = attribute.Route;
                 var httpMethod = attribute.Method;
-                var responseType = handlerType.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)).GetGenericArguments()[0];
-                
+                var responseType = handlerType.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)).GetGenericArguments()[0]; 
 
                 switch (httpMethod)
                 {
                     case Models.HttpMethod.GET:
                         endpoints.MapGet(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
                             .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .AddAuthorization(handlerType)
                             .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.POST:
                         endpoints.MapPost(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
                             .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .AddAuthorization(handlerType)
                             .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.PUT:
-                        endpoints.MapPut(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
+                        endpoints.MapPut(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
+                            .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .AddAuthorization(handlerType)
+                            .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.DELETE:
-                        endpoints.MapDelete(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
+                        endpoints.MapDelete(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
+                            .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .AddAuthorization(handlerType)
+                            .WithOpenApiDescription(handlerType);
                         break;
                     case Models.HttpMethod.PATCH:
-                        endpoints.MapPatch(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod));
+                        endpoints.MapPatch(route, (Delegate)CreateRequestDelegate(handlerType, httpMethod))
+                            .AddFiltersFromAttributes(endpoints.ServiceProvider, handlerType)
+                            .AddAuthorization(handlerType)
+                            .WithOpenApiDescription(handlerType);
                         break;
                     default:
                         throw new NotSupportedException($"Http method {httpMethod} is not supported.");
                 }
             }
         }
-
 
         private static RequestDelegate CreateRequestDelegate(Type requestType, Models.HttpMethod httpMethod)
         {
