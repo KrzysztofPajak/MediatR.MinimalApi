@@ -1,4 +1,5 @@
 ﻿using MediatR.MinimalApi.Attributes;
+using MediatR.MinimalApi.Exceptions;
 using MediatR.MinimalApi.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -55,21 +56,34 @@ namespace MediatR.MinimalApi.Endpoints
             return async context =>
             {
                 var mediator = context.RequestServices.GetRequiredService<IMediator>();
+                var request = await CreateRequestAsync(requestType, httpMethod, context.Request);
 
-                var request = httpMethod switch
+                try
                 {
-                    Models.HttpMethod.GET or Models.HttpMethod.DELETE => CreateFromQueryRequest(requestType, context.Request),
-                    Models.HttpMethod.POST or Models.HttpMethod.PUT or Models.HttpMethod.PATCH => await CreateFromBodyRequest(requestType, context.Request),
-                    _ => throw new NotSupportedException($"Http method {httpMethod} is not supported.")
-                };
-
-                if (request == null) throw new InvalidOperationException("Request cannot be null.");
-
-                var result = await mediator.Send(request);
-                await context.Response.WriteAsJsonAsync(result);
+                    var result = await mediator.Send(request);
+                    await context.Response.WriteAsJsonAsync(result);
+                }
+                catch (HttpResponseException ex)
+                {
+                    await HandleHttpResponseExceptionAsync(context, ex);
+                }
+                catch (Exception ex)
+                {
+                    await HandleExceptionAsync(context, ex);
+                }
             };
         }
+        private static async Task<object> CreateRequestAsync(Type requestType, Models.HttpMethod httpMethod, HttpRequest request)
+        {
+            var result = httpMethod switch
+            {
+                Models.HttpMethod.GET or Models.HttpMethod.DELETE => CreateFromQueryRequest(requestType, request),
+                Models.HttpMethod.POST or Models.HttpMethod.PUT or Models.HttpMethod.PATCH => await CreateFromBodyRequest(requestType, request),
+                _ => throw new NotSupportedException($"Http method {httpMethod} is not supported.")
+            };
 
+            return result ?? throw new InvalidOperationException("Request cannot be null.");
+        }
 
         private static object? CreateFromQueryRequest(Type requestType, HttpRequest httpRequest)
         {
@@ -165,6 +179,36 @@ namespace MediatR.MinimalApi.Endpoints
             {
                 return Convert.ChangeType(value, type);
             }
+        }
+
+        private static Task HandleHttpResponseExceptionAsync(HttpContext context, HttpResponseException ex)
+        {
+            var problemDetails = new ProblemDetails
+            {
+                Status = ex.StatusCode,
+                Title = "An error occurred while processing your request.",
+                Detail = ex.Message
+            };
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = ex.StatusCode;
+
+            return context.Response.WriteAsJsonAsync(problemDetails);
+        }
+
+        private static Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occurred.",
+                Detail = ex.Message,
+            };
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+            return context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
 
