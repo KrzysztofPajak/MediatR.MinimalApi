@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace MediatR.MinimalApi.Endpoints
 {
@@ -14,13 +15,13 @@ namespace MediatR.MinimalApi.Endpoints
     {
         internal static void MediatREndpoint(this IEndpointRouteBuilder endpoints, IEnumerable<Type> handlerTypes)
         {
-            var methodMappings = new Dictionary<Models.HttpMethod, Func<string, Delegate, RouteHandlerBuilder>>
+            var methodMappings = new Dictionary<HttpMethod, Func<string, Delegate, RouteHandlerBuilder>>
             {
-                { Models.HttpMethod.GET, endpoints.MapGet },
-                { Models.HttpMethod.POST, endpoints.MapPost },
-                { Models.HttpMethod.PUT, endpoints.MapPut },
-                { Models.HttpMethod.DELETE, endpoints.MapDelete },
-                { Models.HttpMethod.PATCH, endpoints.MapPatch }
+                { HttpMethod.Get, endpoints.MapGet },
+                { HttpMethod.Post, endpoints.MapPost },
+                { HttpMethod.Put, endpoints.MapPut },
+                { HttpMethod.Delete, endpoints.MapDelete },
+                { HttpMethod.Patch, endpoints.MapPatch }
             };
 
             foreach (var handlerType in handlerTypes)
@@ -53,7 +54,7 @@ namespace MediatR.MinimalApi.Endpoints
                 .WithOpenApiDescription(handlerType);
         }
 
-        private static RequestDelegate CreateRequestDelegate(Type requestType, Models.HttpMethod httpMethod)
+        private static RequestDelegate CreateRequestDelegate(Type requestType, HttpMethod httpMethod)
         {
             return async context =>
             {

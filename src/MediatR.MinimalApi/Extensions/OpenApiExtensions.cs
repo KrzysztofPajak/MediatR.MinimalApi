@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mime;
 using System.Reflection;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace MediatR.MinimalApi.Extensions
 {
@@ -27,7 +28,7 @@ namespace MediatR.MinimalApi.Extensions
                 operation.Tags = new List<OpenApiTag> { new() { Name = attribute.TagName } };
             }
 
-            if (attribute.Method != Models.HttpMethod.GET)
+            if (attribute.Method != HttpMethod.Get)
             {
                 operation.RequestBody = CreateRequestBody(requestType);
                 builder.WithMetadata(new AcceptsMetadata([MediaTypeNames.Application.Json], requestType));

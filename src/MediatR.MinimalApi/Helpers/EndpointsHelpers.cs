@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace MediatR.MinimalApi.Helpers;
 internal static class EndpointsHelpers
 {
-    public static async Task<object> CreateRequestAsync(Type requestType, Models.HttpMethod httpMethod, HttpRequest request)
+    public static async Task<object> CreateRequestAsync(Type requestType, HttpMethod httpMethod, HttpRequest request)
     {
         var result = httpMethod switch
         {
-            Models.HttpMethod.GET or Models.HttpMethod.DELETE => CreateFromQueryRequest(requestType, request),
-            Models.HttpMethod.POST or Models.HttpMethod.PUT or Models.HttpMethod.PATCH => await CreateFromBodyRequest(requestType, request),
+            HttpMethod.Get or HttpMethod.Delete => CreateFromQueryRequest(requestType, request),
+            HttpMethod.Post or HttpMethod.Put or HttpMethod.Patch => await CreateFromBodyRequest(requestType, request),
             _ => throw new NotSupportedException($"Http method {httpMethod} is not supported.")
         };
 
