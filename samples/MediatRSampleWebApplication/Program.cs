@@ -1,4 +1,5 @@
 using MediatR.MinimalApi.Extensions;
+using MediatRSampleWebApplication.EndpointFilters;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddTransient<ValidationFilter>();
 
 // Register MediatR services
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
