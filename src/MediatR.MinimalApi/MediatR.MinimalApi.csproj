@@ -13,4 +13,11 @@
 		<PackageReference Include="MediatR" Version="12.3.0" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />		
 	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>MediatR.MinimalApi.Tests.Unit</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	
 </Project>
