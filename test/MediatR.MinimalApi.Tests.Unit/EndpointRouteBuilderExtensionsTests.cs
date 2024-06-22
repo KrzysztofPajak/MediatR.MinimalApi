@@ -35,13 +35,13 @@ public class EndpointRouteBuilderExtensionsTests
                 
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapGetWithMediator<YourGetRequest, YourResponse>("/example-get");
-                    endpoints.MapGetWithMediator<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
-                    endpoints.MapPostWithMediator<YourPostRequest, YourResponse>("/example-post");
-                    endpoints.MapPostWithMediator<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
-                    endpoints.MapDeleteWithMediator<YourDeleteRequest, YourResponse>("/example-delete");
-                    endpoints.MapPatchWithMediator<YourPatchRequest, YourResponse>("/example-patch");
-                    endpoints.MapPutWithMediator<YourPutRequest, YourResponse>("/example-put");
+                    endpoints.MapGetWithMediatr<YourGetRequest, YourResponse>("/example-get");
+                    endpoints.MapGetWithMediatr<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
+                    endpoints.MapPostWithMediatr<YourPostRequest, YourResponse>("/example-post");
+                    endpoints.MapPostWithMediatr<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
+                    endpoints.MapDeleteWithMediatr<YourDeleteRequest, YourResponse>("/example-delete");
+                    endpoints.MapPatchWithMediatr<YourPatchRequest, YourResponse>("/example-patch");
+                    endpoints.MapPutWithMediatr<YourPutRequest, YourResponse>("/example-put");
                 });
             });
         
