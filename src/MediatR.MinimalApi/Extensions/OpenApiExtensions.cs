@@ -67,7 +67,7 @@ namespace MediatR.MinimalApi.Extensions
         private static IEnumerable<OpenApiParameter> GetPropertyParameters(Type requestType)
         {
             return requestType.GetProperties()
-                .Where(property => property.GetCustomAttribute<FromQueryAttribute>() is not null)
+                .Where(property => property.GetCustomAttribute<FromQueryAttribute>() is not null || property.GetCustomAttribute<FromRouteAttribute>() is not null)
                 .Select(property => CreateOpenApiParameter(property.Name, property.PropertyType, property.GetCustomAttributes()));
         }
         private static IEnumerable<OpenApiParameter> GetConstructorParameters(Type requestType)
@@ -80,19 +80,22 @@ namespace MediatR.MinimalApi.Extensions
             }
 
             return constructor.GetParameters()
-                .Where(param => param.GetCustomAttribute<FromQueryAttribute>() is not null)
+                .Where(param => param.GetCustomAttribute<FromQueryAttribute>() is not null || param.GetCustomAttribute<FromRouteAttribute>() is not null)
                 .Select(param => CreateOpenApiParameter(param.Name!, param.ParameterType, param.GetCustomAttributes()));
         }
         private static OpenApiParameter CreateOpenApiParameter(string name, Type parameterType, IEnumerable<Attribute> attributes)
         {
             var description = attributes.OfType<DescriptionAttribute>().FirstOrDefault()?.Description ?? string.Empty;
             var isRequired = attributes.OfType<RequiredAttribute>().Any();
+            var location = ParameterLocation.Query;
+            if (attributes.OfType<FromRouteAttribute>().Any())
+                location = ParameterLocation.Path;
 
             return new OpenApiParameter
             {
                 Name = name,
                 Description = description,
-                In = ParameterLocation.Query,
+                In = location,
                 Required = isRequired,
                 Schema = new OpenApiSchema { Type = parameterType.Name.ToLower() }
             };

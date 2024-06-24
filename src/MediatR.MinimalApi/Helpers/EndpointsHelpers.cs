@@ -21,13 +21,13 @@ internal static class EndpointsHelpers
 
     private static object? CreateFromQueryRequest(Type requestType, HttpRequest httpRequest)
     {
-        var parameterValues = ExtractParameterValues(requestType, httpRequest.Query);
+        var parameterValues = ExtractParameterValues(requestType, httpRequest);
         var request = Activator.CreateInstance(requestType, parameterValues);
-        PopulateRequestFromQuery(request, httpRequest.Query);
+        PopulateRequestFromQuery(request, httpRequest);
         return request;
     }
 
-    private static object?[]? ExtractParameterValues(Type requestType, IQueryCollection query)
+    private static object?[]? ExtractParameterValues(Type requestType, HttpRequest httpRequest)
     {
         var constructor = requestType.GetConstructors().FirstOrDefault();
         if (constructor == null)
@@ -41,7 +41,11 @@ internal static class EndpointsHelpers
         for (int i = 0; i < parameters.Length; i++)
         {
             var param = parameters[i];
-            if (query.TryGetValue(param.Name!, out var value))
+            if(httpRequest.RouteValues.TryGetValue(param.Name!, out var routeValue))
+            {
+                args[i] = EndpointsHelpers.ConvertToType(routeValue!.ToString()!, param.ParameterType);
+            }
+            else if (httpRequest.Query.TryGetValue(param.Name!, out var value))
             {
                 args[i] = EndpointsHelpers.ConvertToType(value.ToString(), param.ParameterType);
             }
@@ -65,20 +69,25 @@ internal static class EndpointsHelpers
     private static async ValueTask<object?> CreateFromBodyRequest(Type requestType, HttpRequest httpRequest)
     {
         var request = httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
-        PopulateRequestFromQuery(request, httpRequest.Query);
+        PopulateRequestFromQuery(request, httpRequest);
         return request;
     }
 
-    private static void PopulateRequestFromQuery(object? request, IQueryCollection query)
+    private static void PopulateRequestFromQuery(object? request, HttpRequest httpRequest)
     {
         if (request == null) return;
         var requestType = request.GetType();
 
         foreach (var property in requestType.GetProperties())
         {
-            if (property.GetCustomAttribute<FromQueryAttribute>() is not null && query.TryGetValue(property.Name, out var value))
+            if (property.GetCustomAttribute<FromQueryAttribute>() is not null && httpRequest.Query.TryGetValue(property.Name, out var value))
             {
                 var convertedValue = EndpointsHelpers.ConvertToType(value.ToString(), property.PropertyType);
+                property.SetValue(request, convertedValue);
+            }
+            if (property.GetCustomAttribute<FromRouteAttribute>() is not null && httpRequest.RouteValues.TryGetValue(property.Name, out var routeValue))
+            {
+                var convertedValue = EndpointsHelpers.ConvertToType(routeValue!.ToString()!, property.PropertyType);
                 property.SetValue(request, convertedValue);
             }
         }
