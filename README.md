@@ -80,7 +80,7 @@ var app = builder.Build();
 // Define endpoints
 app.MapGetWithMediatR<YourGetRequest, YourResponse>("/example-get");
 app.MapGetWithMediatR<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
-app.MapPostWithMediaRr<YourPostRequest, YourResponse>("/example-post");
+app.MapPostWithMediatR<YourPostRequest, YourResponse>("/example-post");
 app.MapPostWithMediatR<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
 app.MapDeleteWithMediatR<YourDeleteRequest, YourResponse>("/example-delete");
 app.MapPatchWithMediatR<YourPatchRequest, YourResponse>("/example-patch");
