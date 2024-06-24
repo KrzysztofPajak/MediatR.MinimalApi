@@ -35,13 +35,13 @@ public class EndpointRouteBuilderExtensionsTests
                 
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapGetWithMediatr<YourGetRequest, YourResponse>("/example-get");
-                    endpoints.MapGetWithMediatr<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
-                    endpoints.MapPostWithMediatr<YourPostRequest, YourResponse>("/example-post");
-                    endpoints.MapPostWithMediatr<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
-                    endpoints.MapDeleteWithMediatr<YourDeleteRequest, YourResponse>("/example-delete");
-                    endpoints.MapPatchWithMediatr<YourPatchRequest, YourResponse>("/example-patch");
-                    endpoints.MapPutWithMediatr<YourPutRequest, YourResponse>("/example-put");
+                    endpoints.MapGetWithMediatR<YourGetRequest, YourResponse>("/example-get");
+                    endpoints.MapGetWithMediatR<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
+                    endpoints.MapPostWithMediatR<YourPostRequest, YourResponse>("/example-post");
+                    endpoints.MapPostWithMediatR<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
+                    endpoints.MapDeleteWithMediatR<YourDeleteRequest, YourResponse>("/example-delete");
+                    endpoints.MapPatchWithMediatR<YourPatchRequest, YourResponse>("/example-patch");
+                    endpoints.MapPutWithMediatR<YourPutRequest, YourResponse>("/example-put");
                 });
             });
         
@@ -198,66 +198,66 @@ public class EndpointRouteBuilderExtensionsTests
         public int Id { get; set; }
 
     }
-    public class YourPostRequest() : IRequest<YourResponse>
+    public class YourPostRequest : IRequest<YourResponse>
     {
         [FromBody]
-        public Test Data { get; set; }
+        public Test? Data { get; set; }
 
         public class Test
         {
-            public string Test1 { get; set; }
-            public string Test2 { get; set; }
+            public string? Test1 { get; set; }
+            public string? Test2 { get; set; }
         }
     }
 
-    public class YourPostWithQueryParamRequest() : IRequest<YourResponse>
+    public class YourPostWithQueryParamRequest : IRequest<YourResponse>
     {
         [FromBody]
-        public Test Data { get; set; }
+        public Test? Data { get; set; }
         public int Id { get; set; }
 
         public class Test
         {
-            public string Test1 { get; set; }
-            public string Test2 { get; set; }
+            public string? Test1 { get; set; }
+            public string? Test2 { get; set; }
         }
     }
 
-    public class YourDeleteRequest() : IRequest<YourResponse>
+    public class YourDeleteRequest : IRequest<YourResponse>
     {
         [FromQuery]
         public int Id { get; set; }
 
     }
 
-    public class YourPatchRequest() : IRequest<YourResponse>
+    public class YourPatchRequest : IRequest<YourResponse>
     {
         [FromBody]
-        public Test Data { get; set; }
+        public Test? Data { get; set; }
         public int Id { get; set; }
 
         public class Test
         {
-            public string Test1 { get; set; }
-            public string Test2 { get; set; }
+            public string? Test1 { get; set; }
+            public string? Test2 { get; set; }
         }
     }
 
-    public class YourPutRequest() : IRequest<YourResponse>
+    public class YourPutRequest : IRequest<YourResponse>
     {
         [FromBody]
-        public Test Data { get; set; }
+        public Test? Data { get; set; }
         public int Id { get; set; }
 
         public class Test
         {
-            public string Test1 { get; set; }
-            public string Test2 { get; set; }
+            public string? Test1 { get; set; }
+            public string? Test2 { get; set; }
         }
     }
     public class YourResponse
     {
-        public string Result { get; set; }
+        public string? Result { get; set; }
     }
 
     public class YourGetRequestHandler : IRequestHandler<YourGetRequest, YourResponse>
@@ -278,14 +278,14 @@ public class EndpointRouteBuilderExtensionsTests
     {
         public async Task<YourResponse> Handle(YourPostRequest request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult(new YourResponse { Result = $"Received: Test1:{request.Data.Test1}, Test2:{request.Data.Test2}" });
+            return await Task.FromResult(new YourResponse { Result = $"Received: Test1:{request.Data!.Test1}, Test2:{request.Data.Test2}" });
         }
     }
     public class YourPostWithQueryParamRequestHandler : IRequestHandler<YourPostWithQueryParamRequest, YourResponse>
     {
         public async Task<YourResponse> Handle(YourPostWithQueryParamRequest request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult(new YourResponse { Result = $"Received: Id:{request.Id} Test1:{request.Data.Test1}, Test2:{request.Data.Test2}" });
+            return await Task.FromResult(new YourResponse { Result = $"Received: Id:{request.Id} Test1:{request.Data!.Test1}, Test2:{request.Data.Test2}" });
         }
     }
     public class YourDeleteRequestHandler : IRequestHandler<YourDeleteRequest, YourResponse>
@@ -299,14 +299,14 @@ public class EndpointRouteBuilderExtensionsTests
     {
         public async Task<YourResponse> Handle(YourPatchRequest request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult(new YourResponse { Result = $"Patch: Id:{request.Id} Test1:{request.Data.Test1}, Test2:{request.Data.Test2}" });
+            return await Task.FromResult(new YourResponse { Result = $"Patch: Id:{request.Id} Test1:{request.Data!.Test1}, Test2:{request.Data.Test2}" });
         }
     }
     public class YourPutRequestHandler : IRequestHandler<YourPutRequest, YourResponse>
     {
         public async Task<YourResponse> Handle(YourPutRequest request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult(new YourResponse { Result = $"Put: Id:{request.Id} Test1:{request.Data.Test1}, Test2:{request.Data.Test2}" });
+            return await Task.FromResult(new YourResponse { Result = $"Put: Id:{request.Id} Test1:{request.Data!.Test1}, Test2:{request.Data.Test2}" });
         }
     }
 }

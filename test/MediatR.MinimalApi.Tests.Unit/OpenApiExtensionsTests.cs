@@ -120,28 +120,28 @@ namespace MediatR.MinimalApi.Tests.Unit
         private T InvokePrivateMethod<T>(string methodName, params object[] parameters)
         {
             var method = typeof(OpenApiExtensions).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-            return (T)method.Invoke(null, parameters);
+            return (T)method!.Invoke(null, parameters)!;
         }
 
         private void InvokePrivateMethod(string methodName, params object[] parameters)
         {
             var method = typeof(OpenApiExtensions).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
-            method.Invoke(null, parameters);
+            method!.Invoke(null, parameters);
         }
 
         [Endpoint("test", Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Get, "tag")]
         private class SampleRequest : IRequest<SampleResponse>
         {
             [FromQuery]
-            public string QueryParam { get; set; }
-            public string Id { get; set; }
+            public string? QueryParam { get; set; }
+            public string? Id { get; set; }
         }
 
         [ProducesResponseType(200)]
         [Endpoint("test2", Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod.Post, "tag")]
         private class SamplePostRequest : IRequest<SampleResponse>
         {
-            public string Id { get; set; }
+            public string? Id { get; set; }
         }
 
         private class SampleResponse
