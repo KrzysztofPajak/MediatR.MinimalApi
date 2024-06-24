@@ -7,33 +7,33 @@ namespace MediatR.MinimalApi.Extensions;
 
 public static class EndpointRouteBuilderExtensions
 {
-    public static RouteHandlerBuilder MapGetWithMediatr<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : class
+    public static RouteHandlerBuilder MapGetWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : IRequest<TResponse>
     {
-        return endpoints.MapMethodWithMediator<TRequest, TResponse>(pattern, endpoints.MapGet);
+        return endpoints.MapMethodWithMediatR<TRequest, TResponse>(pattern, endpoints.MapGet);
     }
 
-    public static RouteHandlerBuilder MapPostWithMediatr<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : class
+    public static RouteHandlerBuilder MapPostWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : IRequest<TResponse>
     {
-        return endpoints.MapMethodWithMediator<TRequest, TResponse>(pattern, endpoints.MapPost);
+        return endpoints.MapMethodWithMediatR<TRequest, TResponse>(pattern, endpoints.MapPost);
     }
 
-    public static RouteHandlerBuilder MapDeleteWithMediatr<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : class
+    public static RouteHandlerBuilder MapDeleteWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : IRequest<TResponse>
     {
-        return endpoints.MapMethodWithMediator<TRequest, TResponse>(pattern, endpoints.MapDelete);
+        return endpoints.MapMethodWithMediatR<TRequest, TResponse>(pattern, endpoints.MapDelete);
     }
 
-    public static RouteHandlerBuilder MapPatchWithMediatr<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : class
+    public static RouteHandlerBuilder MapPatchWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : IRequest<TResponse>
     {
-        return endpoints.MapMethodWithMediator<TRequest, TResponse>(pattern, endpoints.MapPatch);
+        return endpoints.MapMethodWithMediatR<TRequest, TResponse>(pattern, endpoints.MapPatch);
     }
 
-    public static RouteHandlerBuilder MapPutWithMediatr<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : class
+    public static RouteHandlerBuilder MapPutWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern) where TRequest : IRequest<TResponse>
     {
-        return endpoints.MapMethodWithMediator<TRequest, TResponse>(pattern, endpoints.MapPut);
+        return endpoints.MapMethodWithMediatR<TRequest, TResponse>(pattern, endpoints.MapPut);
     }
 
-    private static RouteHandlerBuilder MapMethodWithMediator<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern, Func<string, Delegate, RouteHandlerBuilder> mapMethod) 
-        where TRequest : class
+    private static RouteHandlerBuilder MapMethodWithMediatR<TRequest, TResponse>(this IEndpointRouteBuilder endpoints, string pattern, Func<string, Delegate, RouteHandlerBuilder> mapMethod) 
+        where TRequest : IRequest<TResponse>
     {
         return mapMethod(pattern, async ([AsParameters] TRequest request, [FromServices] IMediator mediator) =>
         {
