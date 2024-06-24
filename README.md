@@ -78,13 +78,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Yo
 var app = builder.Build();
 
 // Define endpoints
-app.MapGetWithMediatr<YourGetRequest, YourResponse>("/example-get");
-app.MapGetWithMediatr<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
-app.MapPostWithMediatr<YourPostRequest, YourResponse>("/example-post");
-app.MapPostWithMediatr<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
-app.MapDeleteWithMediatr<YourDeleteRequest, YourResponse>("/example-delete");
-app.MapPatchWithMediatr<YourPatchRequest, YourResponse>("/example-patch");
-app.MapPutWithMediatr<YourPutRequest, YourResponse>("/example-put");
+app.MapGetWithMediatR<YourGetRequest, YourResponse>("/example-get");
+app.MapGetWithMediatR<YourGetWithQueryParamRequest, YourResponse>("/example-getbyid");
+app.MapPostWithMediaRr<YourPostRequest, YourResponse>("/example-post");
+app.MapPostWithMediatR<YourPostWithQueryParamRequest, YourResponse>("/example-post-param");
+app.MapDeleteWithMediatR<YourDeleteRequest, YourResponse>("/example-delete");
+app.MapPatchWithMediatR<YourPatchRequest, YourResponse>("/example-patch");
+app.MapPutWithMediatR<YourPutRequest, YourResponse>("/example-put");
 
 app.Run();
 ```
