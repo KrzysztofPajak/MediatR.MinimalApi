@@ -25,13 +25,17 @@ namespace MediatR.MinimalApi.Extensions
 
             if (!string.IsNullOrEmpty(attribute!.TagName))
             {
-                operation.Tags = new List<OpenApiTag> { new() { Name = attribute.TagName } };
+                operation.Tags = [new() { Name = attribute.TagName }];
             }
 
-            if (attribute.Method != HttpMethod.Get)
+            switch (attribute.Method)
             {
-                operation.RequestBody = CreateRequestBody(requestType);
-                builder.WithMetadata(new AcceptsMetadata([MediaTypeNames.Application.Json], requestType));
+                case HttpMethod.Post:
+                case HttpMethod.Patch:
+                case HttpMethod.Put:
+                    operation.RequestBody = CreateRequestBody(requestType);
+                    builder.WithMetadata(new AcceptsMetadata([MediaTypeNames.Application.Json], requestType));
+                    break;
             }
 
             var producesResponseTypeAttributes = requestType.GetCustomAttributes<ProducesResponseTypeAttribute>().ToList();
