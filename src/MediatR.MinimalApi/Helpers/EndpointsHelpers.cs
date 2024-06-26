@@ -68,6 +68,7 @@ internal static class EndpointsHelpers
 
     private static async ValueTask<object?> CreateFromBodyRequest(Type requestType, HttpRequest httpRequest)
     {
+        httpRequest.EnableBuffering();
         httpRequest.Body.Position = 0;
         var request = httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
         PopulateRequestFromQuery(request, httpRequest);
