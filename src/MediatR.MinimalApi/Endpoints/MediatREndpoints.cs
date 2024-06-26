@@ -48,7 +48,7 @@ namespace MediatR.MinimalApi.Endpoints
 
         private static void ConfigureEndpoint(RouteHandlerBuilder endpointBuilder, IServiceProvider serviceProvider, Type handlerType)
         {
-            endpointBuilder
+            endpointBuilder                
                 .AddFiltersFromAttributes(serviceProvider, handlerType)
                 .AddAuthorization(handlerType)
                 .WithOpenApiDescription(handlerType);
