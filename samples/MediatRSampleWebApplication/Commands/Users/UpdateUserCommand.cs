@@ -7,7 +7,7 @@ using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMe
 
 namespace WebApplication.Commands.Users;
 
-[Endpoint("user/update/{Id}", HttpMethod.Post, "User")]
+[Endpoint("user/update/{Id}", HttpMethod.Put, "User")]
 public record UpdateUserCommand(string FirstName, string LastName, string Email) : IRequest<User>
 {
     [JsonIgnore]

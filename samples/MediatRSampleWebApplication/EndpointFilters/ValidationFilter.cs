@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MediatR;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 using System.Text.Json;
 
 namespace MediatRSampleWebApplication.EndpointFilters
@@ -8,6 +10,7 @@ namespace MediatRSampleWebApplication.EndpointFilters
         public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
         {
             var httpContext = context.HttpContext;
+            var request = httpContext.Request;
             var handlerType = httpContext.Items["HandlerType"] as Type;
 
             if (handlerType == null)
@@ -15,23 +18,39 @@ namespace MediatRSampleWebApplication.EndpointFilters
                 return Results.BadRequest("Handler type not found.");
             }
 
-            var body = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
-            var requestInstance = JsonSerializer.Deserialize(body, handlerType, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            request.EnableBuffering();
 
-            var validationResults = new List<ValidationResult>();
-            var validationContext = new ValidationContext(requestInstance!);
+            var bodyAsString = await ReadRequestBodyAsync(request);
 
-            if (!Validator.TryValidateObject(requestInstance!, validationContext, validationResults, true))
+            if (!string.IsNullOrEmpty(bodyAsString))
             {
-                return Results.BadRequest(validationResults);
+                var requestInstance = JsonSerializer.Deserialize(bodyAsString, handlerType, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                var validationResults = new List<ValidationResult>();
+                var validationContext = new ValidationContext(requestInstance!);
+
+                if (!Validator.TryValidateObject(requestInstance!, validationContext, validationResults, true))
+                {                    
+                    return Results.ValidationProblem(new Dictionary<string, string[]>
+                    {
+                        { "Errors", validationResults.Select(x => x.ErrorMessage).ToArray()! }
+                    });
+                }
             }
-
-            context.Arguments[0] = requestInstance;
+            else
+                return Results.Problem(title: "Bad Request", detail: "Request body is empty.", statusCode: StatusCodes.Status400BadRequest);
 
             return await next(context);
         }
+        private static async Task<string> ReadRequestBodyAsync(HttpRequest request)
+        {
+            using var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
+            var body = await reader.ReadToEndAsync();
+            return body;
+        }
+
     }
 }

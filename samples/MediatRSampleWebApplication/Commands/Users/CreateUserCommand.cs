@@ -1,14 +1,12 @@
 ﻿using MediatR;
 using MediatR.MinimalApi.Attributes;
 using MediatRSampleWebApplication.EndpointFilters;
-using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using WebApplication.Models;
 using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
 
 namespace WebApplication.Commands.Users;
 
-[Authorize]
 [EndpointFilter<ValidationFilter>()]
 [Endpoint("user/create", HttpMethod.Post, "User")]
 public class CreateUserCommand : IRequest<User>

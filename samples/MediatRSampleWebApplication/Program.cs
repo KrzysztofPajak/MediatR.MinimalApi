@@ -3,6 +3,7 @@ using MediatRSampleWebApplication.EndpointFilters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
+builder.Services.AddProblemDetails();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -22,14 +23,17 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Pr
 
 var app = builder.Build();
 
+app.UseStatusCodePages();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 // Register MediatR endpoints
 app.MapMediatREndpoints(typeof(Program).Assembly);
 
 app.Run();
+
+public partial class Program { }
