@@ -13,7 +13,7 @@ using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMe
 
 namespace MediatR.MinimalApi.Extensions
 {
-    internal static class OpenApiExtensions
+    public static class OpenApiExtensions
     {
         public static void WithOpenApiDescription(this RouteHandlerBuilder builder, Type requestType)
         {
