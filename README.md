@@ -1,4 +1,6 @@
-# MediatR.MinimalApi (Not Yet Available)
+# MediatR.MinimalApi
+![CI](https://github.com/KrzysztofPajak/MediatR.MinimalApi/workflows/.NET/badge.svg)
+[![NuGet](https://img.shields.io/nuget/vpre/MediatR.MinimalApi.svg)](https://www.nuget.org/packages/MediatR.MinimalApi)
 
 `MediatR.MinimalApi` is a NuGet package that extends the functionality of minimal APIs by allowing automatic registration of endpoints based on attributes. This library leverages the power of MediatR to simplify and streamline the process of setting up and handling API endpoints. It simplifies the integration of MediatR with Minimal API in ASP.NET Core, allowing you to easily map HTTP endpoints to MediatR handlers, thus enabling clean architecture practices in your application.
 
@@ -11,12 +13,14 @@
 
 ## Installation
 
-> The `MediatR.MinimalApi` package is not yet published on NuGet. Once available, you can install it using the following command:
+You should install [MediatR with NuGet](https://www.nuget.org/packages/MediatR.MinimalApi):
 
-```bash
-dotnet add package MediatR.MinimalApi
-```
+    Install-Package MediatR.MinimalApi
+    
+Or via the .NET Core command line interface:
 
+    dotnet add package MediatR.MinimalApi
+    
 ## Usage
 
 ### Manual Registration
