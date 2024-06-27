@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using WebApplication.Models;
 using Xunit;
 
 namespace MediatR.MinimalApi.Tests.Integration
 {
-    public class UserIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class UserIntegrationTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
-        private readonly WebApplicationFactory<Program> _factory;
+        private readonly CustomWebApplicationFactory<Program> _factory;
 
-        public UserIntegrationTests(WebApplicationFactory<Program> factory)
+        public UserIntegrationTests(CustomWebApplicationFactory<Program> factory)
         {
             _factory = factory;
         }
@@ -79,6 +84,79 @@ namespace MediatR.MinimalApi.Tests.Integration
 
             //Assert
             response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task GetUserById_ShouldReturnUser()
+        {
+            //Arrange
+            var client = _factory.CreateClient();
+            var userId = Guid.NewGuid();
+            //Act
+            var response = await client.GetAsync($"/user/{userId}");
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            var retrievedUser = await response.Content.ReadFromJsonAsync<User>();
+            Assert.Equal(userId, retrievedUser!.Id);
+        }
+
+        [Fact]
+        public async Task GetUserById_EmptyGuid_ShouldReturnBadRequest()
+        {
+            //Arrange
+            var client = _factory.CreateClient();
+            var userId = Guid.Empty;
+            //Act
+            var response = await client.GetAsync($"/user/{userId}");
+
+            //Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetAuthorizeUsers_WithAutorization_ShouldReturnUser()
+        {
+            //Arrange
+            var client = _factory.CreateClient();
+            var token = GenerateJwtToken("TestIssuer", "TestAudience", "TestSuperSecretKeyThatIsAtLeast32CharactersLong");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            //Act
+            var response = await client.GetAsync($"/user/admin");
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            var retrievedUser = await response.Content.ReadFromJsonAsync<List<User>>();
+            Assert.Equal(2, retrievedUser!.Count);
+        }
+
+        [Fact]
+        public async Task GetAuthorizeUsers_WithoutAutorization_ShouldReturnUnauthorized()
+        {
+            //Arrange
+            var client = _factory.CreateClient();
+            
+            //Act
+            var response = await client.GetAsync($"/user/admin");
+
+            //Assert
+            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        private string GenerateJwtToken(string issuer, string audience, string key)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

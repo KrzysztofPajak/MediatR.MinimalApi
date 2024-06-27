@@ -1,6 +1,8 @@
 using MediatR.MinimalApi.Extensions;
 using MediatRSampleWebApplication.EndpointFilters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
@@ -11,8 +13,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-        options => builder.Configuration.Bind("JwtSettings", options));
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
+        };
+    });
 
 builder.Services.AddAuthorization();
 
