@@ -4,6 +4,7 @@
 		<Authors>Krzysztof Pajak</Authors>
 		<Copyright>Copyright Krzysztof Pajak</Copyright>
 		<Description>Extends Mediatr functionality for Minimal APIs in ASP.NET Core</Description>
+		<Version>0.0.1</Version>
 		<PackageTags>mediator;mediatr;minimal api</PackageTags>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>..\..\MediatR.MinimalApi.snk</AssemblyOriginatorKeyFile>
