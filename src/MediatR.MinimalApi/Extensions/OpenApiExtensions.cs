@@ -1,4 +1,5 @@
 ﻿using MediatR.MinimalApi.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
@@ -22,6 +23,7 @@ namespace MediatR.MinimalApi.Extensions
 
             var operation = CreateOpenApiOperation(requestType, attribute!);
             operation.Parameters = ExtractParameters(requestType);
+            operation.Security = GetSecurityRequirements(requestType);
 
             if (!string.IsNullOrEmpty(attribute!.TagName))
             {
@@ -68,6 +70,33 @@ namespace MediatR.MinimalApi.Extensions
 
             return propertyParameters.Concat(constructorParameters).ToArray();
         }
+
+        private static OpenApiSecurityRequirement[]? GetSecurityRequirements(Type requestType)
+        {
+            var hasAuthorize = requestType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
+            if (hasAuthorize)
+            {
+                return new List<OpenApiSecurityRequirement>
+                {
+                    new() {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer",
+                                }
+                            },
+                            Array.Empty<string>()
+                        }
+                    }
+                }.ToArray();
+            }
+
+            return null;
+        }
+
         private static IEnumerable<OpenApiParameter> GetPropertyParameters(Type requestType)
         {
             return requestType.GetProperties()
