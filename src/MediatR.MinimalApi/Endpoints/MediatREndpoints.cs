@@ -63,8 +63,8 @@ namespace MediatR.MinimalApi.Endpoints
 
                 try
                 {
-                    var result = await mediator.Send(request);
-                    await context.Response.WriteAsJsonAsync(result);
+                    var result = await mediator.Send(request, context.RequestAborted);
+                    await context.Response.WriteAsJsonAsync(result, context.RequestAborted);
                 }
                 catch (HttpResponseException ex)
                 {
