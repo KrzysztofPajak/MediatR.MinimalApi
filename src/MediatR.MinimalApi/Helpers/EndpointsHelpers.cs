@@ -7,7 +7,7 @@ using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMe
 namespace MediatR.MinimalApi.Helpers;
 internal static class EndpointsHelpers
 {
-    public static async Task<object> CreateRequestAsync(Type requestType, HttpMethod httpMethod, HttpRequest request)
+    public static async ValueTask<object> CreateRequestAsync(Type requestType, HttpMethod httpMethod, HttpRequest request)
     {
         var result = httpMethod switch
         {
@@ -17,6 +17,14 @@ internal static class EndpointsHelpers
         };
 
         return result ?? throw new InvalidOperationException("Request cannot be null.");
+    }
+    private static async ValueTask<object?> CreateFromBodyRequest(Type requestType, HttpRequest httpRequest)
+    {
+        httpRequest.EnableBuffering();
+        httpRequest.Body.Position = 0;
+        var request = httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
+        PopulateRequestFromQuery(request, httpRequest);
+        return request;
     }
 
     private static object? CreateFromQueryRequest(Type requestType, HttpRequest httpRequest)
@@ -64,15 +72,6 @@ internal static class EndpointsHelpers
             return Activator.CreateInstance(type);
         }
         return null;
-    }
-
-    private static async ValueTask<object?> CreateFromBodyRequest(Type requestType, HttpRequest httpRequest)
-    {
-        httpRequest.EnableBuffering();
-        httpRequest.Body.Position = 0;
-        var request = httpRequest.ContentLength is > 0 ? await httpRequest.ReadFromJsonAsync(requestType) : Activator.CreateInstance(requestType);
-        PopulateRequestFromQuery(request, httpRequest);
-        return request;
     }
 
     private static void PopulateRequestFromQuery(object? request, HttpRequest httpRequest)
@@ -125,36 +124,18 @@ internal static class EndpointsHelpers
         return context.Response.WriteAsJsonAsync(problemDetails);
     }
 
-
     public static object? ConvertToType(string value, Type type)
     {
-        if (type == typeof(Guid))
+        return type switch
         {
-            return Guid.Parse(value);
-        }
-        else if (type == typeof(int))
-        {
-            return int.Parse(value);
-        }
-        else if (type == typeof(long))
-        {
-            return long.Parse(value);
-        }
-        else if (type == typeof(bool))
-        {
-            return bool.Parse(value);
-        }
-        else if (type == typeof(DateTime))
-        {
-            return DateTime.Parse(value);
-        }
-        else if (type.IsEnum)
-        {
-            return Enum.Parse(type, value);
-        }
-        else
-        {
-            return Convert.ChangeType(value, type);
-        }
+            _ when type == typeof(Guid) => Guid.Parse(value),
+            _ when type == typeof(int) => int.Parse(value),
+            _ when type == typeof(long) => long.Parse(value),
+            _ when type == typeof(bool) => bool.Parse(value),
+            _ when type == typeof(DateTime) => DateTime.Parse(value),
+            _ when type.IsEnum => Enum.Parse(type, value),
+            _ => Convert.ChangeType(value, type),
+        };
     }
+
 }
