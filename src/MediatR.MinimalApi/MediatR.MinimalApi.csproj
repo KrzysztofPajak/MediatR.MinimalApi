@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Authors>Krzysztof Pajak</Authors>
+		<Copyright>Copyright Krzysztof Pajak</Copyright>
+		<Description>Extends Mediatr functionality for Minimal APIs in ASP.NET Core</Description>
+		<Version>0.0.2</Version>
+		<RepositoryUrl>https://github.com/KrzysztofPajak/MediatR.MinimalApi</RepositoryUrl>
+		<PackageLicenseUrl>https://github.com/KrzysztofPajak/MediatR.MinimalApi/blob/develop/LICENSE</PackageLicenseUrl>
+		<RepositoryType>Git</RepositoryType>
+		<PackageTags>mediator;mediatr;minimalapi</PackageTags>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\..\MediatR.MinimalApi.snk</AssemblyOriginatorKeyFile>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="12.3.0" />
+		<PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />		
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>
+				MediatR.MinimalApi.Tests.Unit, PublicKey=00240000048000009400000006020000002400005253413100040000010001009dad9b5cb28464226605fcab874228014a1d73f79e19ccbeb4d6c1deabc7636016ea3af47ce378dbe32aca5478cf83af251afb0d26f7a82bd275d507c159d4a5377e9971a65d6d3604d546f9883e936c097cf535d90faf2710e2714305b4f62214a791ee69a678463e4ce4e1b8975c1f4d416cb24927dd0c3e1f8d9aedcd7abf
+			</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+	
+</Project>
