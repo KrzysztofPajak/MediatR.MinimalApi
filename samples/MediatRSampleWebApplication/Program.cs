@@ -1,5 +1,7 @@
 using MediatR.MinimalApi.Extensions;
+using MediatRSampleWebApplication.Commands.Roles;
 using MediatRSampleWebApplication.EndpointFilters;
+using MediatRSampleWebApplication.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -72,8 +74,51 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// Register MediatR endpoints
+
+// Register MediatR endpoints (based on attributes Endpoint)
 app.MapMediatREndpoints(typeof(Program).Assembly);
+
+
+// Register MediatR endpoints (based on manual registration)
+app.MapPostWithMediatR<CreateRole.CreateRoleCommand, Role>("/role/create")
+    .WithDisplayName("CreateRole")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
+
+app.MapGetWithMediatR<GetRoles.GetRolesCommand, IList<Role>>("/role/get")
+    .WithDisplayName("GetRoles")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
+
+app.MapGetWithMediatR<GetRoleById.GetRoleByIdCommand, Role>("/role/get/{id}")
+    .WithDisplayName("GetRoleById")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
+
+app.MapPutWithMediatR<UpdateRole.UpdateRoleCommand, Role>("/role/update/{Id}")
+    .WithDisplayName("UpdateRole")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
+
+app.MapDeleteWithMediatR<DeleteRole.DeleteRoleCommand, bool>("/role/delete/{Id}")
+    .WithDisplayName("DeleteRole")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
 
 app.Run();
 
