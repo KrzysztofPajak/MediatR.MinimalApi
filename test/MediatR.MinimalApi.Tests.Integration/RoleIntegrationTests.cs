@@ -39,7 +39,7 @@ public class RoleIntegrationTests : IClassFixture<CustomWebApplicationFactory<Pr
         var client = _factory.CreateClient();
 
         //Act
-        var response = await client.GetAsync("/role/get/1");
+        var response = await client.GetAsync($"/role/get/{Guid.NewGuid()}");
 
         //Assert
         response.EnsureSuccessStatusCode();
