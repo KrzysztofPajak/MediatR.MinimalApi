@@ -1,5 +1,4 @@
-﻿
-namespace MediatR.MinimalApi.Exceptions;
+﻿namespace MediatR.MinimalApi.Exceptions;
 
 public class HttpResponseException : Exception
 {
