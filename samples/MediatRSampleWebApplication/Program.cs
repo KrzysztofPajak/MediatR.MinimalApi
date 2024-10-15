@@ -3,9 +3,11 @@ using MediatRSampleWebApplication.Commands.Roles;
 using MediatRSampleWebApplication.EndpointFilters;
 using MediatRSampleWebApplication.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
@@ -62,7 +64,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddTransient<ValidationFilter>();
 
 // Register MediatR services
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+});
+
+//Register MediatR services for Minimal API
+builder.Services.MinimalApiMediatRExtensions();
 
 var app = builder.Build();
 

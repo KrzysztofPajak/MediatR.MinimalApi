@@ -45,7 +45,7 @@ public static class EndpointRouteBuilderExtensions
             }
             catch (HttpResponseException ex)
             {
-                return Results.Problem(statusCode: ex.StatusCode, detail: ex.Message);
+                return Results.Problem(statusCode: ex.StatusCode, detail: ex.Message, extensions: ex.Extensions);
             }
         });
     }

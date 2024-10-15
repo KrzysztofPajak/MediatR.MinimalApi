@@ -4,8 +4,7 @@ using MediatR.MinimalApi.Exceptions;
 
 namespace MediatR.MinimalApi.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-where TRequest : notnull
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -23,7 +22,7 @@ where TRequest : notnull
 
         if (validationFailures.Any())
         {
-            throw new HttpResponseException(400, BuildErrorMessage(validationFailures));
+            throw new HttpResponseException(400, "", new Dictionary<string, object?>() { { "errors", validationFailures.Select(x => x.ErrorMessage).ToList() } });
         }
 
         return await next();
