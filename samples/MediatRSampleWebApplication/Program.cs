@@ -128,6 +128,23 @@ app.MapDeleteWithMediatR<DeleteRole.DeleteRoleCommand, bool>("/role/delete/{Id}"
         return x;
     });
 
+
+app.MapPostWithMediatR<CreateCompany.CreateCompanyCommand, Company>("/company/create")
+    .WithDisplayName("CreateCompany")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Company" }];
+        return x;
+    });
+
+app.MapGetWithMediatR<GetCompany.Companies, IList<Company>>("/company/get")
+    .WithDisplayName("GetCompanies")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Company" }];
+        return x;
+    });
+
 app.Run();
 
 public partial class Program { }
