@@ -4,12 +4,33 @@
 
 `MediatR.MinimalApi` is a NuGet package that extends the functionality of minimal APIs by allowing automatic registration of endpoints based on attributes. This library leverages the power of MediatR to simplify and streamline the process of setting up and handling API endpoints. It simplifies the integration of MediatR with Minimal API in ASP.NET Core, allowing you to easily map HTTP endpoints to MediatR handlers, thus enabling clean architecture practices in your application.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Manual Registration](#manual-registration)
+    - [Define Request and Response Models](#1-define-request-and-response-models)
+    - [Implement the MediatR Request Handler](#2-implement-the-mediatr-request-handler)
+    - [Configure Minimal API](#3-configure-minimal-api)
+  - [Automatic Registration](#automatic-registration)
+    - [Defining Commands/Queries](#1-defining-commandsqueries)
+    - [Endpoint Attribute](#2-endpoint-attribute)
+    - [Authorization](#3-authorization)
+    - [Endpoint Filters](#4-endpoint-filters)
+    - [Example](#5-example)
+  - [Additional Pipelines](#additional-pipelines)
+
+
 ## Features
 
 - Support for various HTTP methods (GET, POST, DELETE, PATCH, PUT) with MediatR.
 - Easy configuration and usage with extension methods.
 - Ability to create endpoints through automatic registration using attributes or manual registration
 - Compatible with Minimal API in ASP.NET Core 8.
+- **Validation Pipeline**: Uses the FluentValidation library to validate your requests.
+- **Authorization Pipeline**: Allows you to use the `Authorize` attribute in your `IRequest` classes.
+- **Field Access Authorization Pipeline**: Using the `[RoleBasedAccess("Admin")]` attribute ensures that only users with the "Admin" role can access the value of the field.
 
 ## Installation
 
@@ -168,4 +189,36 @@ app.MapMediatREndpoints(typeof(Program).Assembly);
 app.Run();
 ```
 
+### Additional Pipelines
 
+By registering the MediatR extension in `Program.cs` using:
+
+```csharp
+builder.Services.MinimalApiMediatRExtensions();
+```
+
+You enable additional pipelines:
+
+1. **Validation Pipeline**: Uses the FluentValidation library to validate your requests.
+2. **Authorization Pipeline**: Allows you to use the `Authorize` attribute in your `IRequest` classes.
+
+#### Example of Authorization Attribute
+```csharp
+ [Authorize]
+ public record CreateCompanyCommand([FromBody] CreateCompanyRequest Role) : IRequest<Company>;
+```
+
+3. **Field Access Authorization Pipeline**: Using the `[RoleBasedAccess("Admin")]` attribute ensures that only users with the "Admin" role can access the value of the field.
+#### Example of Field Access Authorization
+
+You can use the `[RoleBasedAccess("Admin")]` attribute to restrict access to specific fields based on user roles. Here’s an example:
+
+```csharp
+public class YourResponse
+{
+    public string Result { get; set; }
+
+    [RoleBasedAccess("Admin")]
+    public string AdminOnlyField { get; set; }
+}
+```

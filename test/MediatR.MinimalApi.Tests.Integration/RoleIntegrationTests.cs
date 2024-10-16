@@ -59,8 +59,8 @@ public class RoleIntegrationTests : IClassFixture<CustomWebApplicationFactory<Pr
         //Assert
         response.EnsureSuccessStatusCode();
         var role = await response.Content.ReadFromJsonAsync<List<Role>>();
-        Assert.NotEmpty(role);
-        Assert.Equal(2, role.Count);
+        Assert.NotEmpty(role!);
+        Assert.Equal(2, role!.Count);
         Assert.NotNull(role);
     }
 
@@ -105,7 +105,7 @@ public class RoleIntegrationTests : IClassFixture<CustomWebApplicationFactory<Pr
 
     public class Test
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
     record Role(string Name, Guid Id);
 }
