@@ -54,7 +54,6 @@ builder.Services.Configure<JsonOptions>(options =>
      options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
  });
 
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -97,7 +96,6 @@ if (app.Environment.IsDevelopment())
 
 // Register MediatR endpoints (based on attributes Endpoint)
 app.MapMediatREndpoints(typeof(Program).Assembly);
-
 
 // Register MediatR endpoints (based on manual registration)
 app.MapPostWithMediatR<CreateRole.CreateRoleCommand, Role>("/role/create")
@@ -156,6 +154,7 @@ app.MapGetWithMediatR<GetCompany.Companies, IList<Company>>("/company/get")
         x.Tags = [new OpenApiTag() { Name = "Company" }];
         return x;
     });
+
 
 app.Run();
 

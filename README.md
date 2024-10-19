@@ -21,7 +21,6 @@
     - [Example](#5-example)
   - [Additional Pipelines](#additional-pipelines)
 
-
 ## Features
 
 - Support for various HTTP methods (GET, POST, DELETE, PATCH, PUT) with MediatR.
@@ -188,7 +187,6 @@ app.MapMediatREndpoints(typeof(Program).Assembly);
 
 app.Run();
 ```
-
 ### Additional Pipelines
 
 By registering the MediatR extension in `Program.cs` using:
@@ -221,4 +219,3 @@ public class YourResponse
     [RoleBasedAccess("Admin")]
     public string AdminOnlyField { get; set; }
 }
-```

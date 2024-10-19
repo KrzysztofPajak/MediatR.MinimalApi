@@ -1,4 +1,4 @@
-﻿using MediatR.MinimalApi.Tests.Integration.Extensions;
+using MediatR.MinimalApi.Tests.Integration.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -1,4 +1,4 @@
-﻿using MediatR.MinimalApi.Exceptions;
+using MediatR.MinimalApi.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
