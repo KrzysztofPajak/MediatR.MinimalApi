@@ -7,10 +7,10 @@ namespace MediatR.MinimalApi.Extensions;
 
 public static class ServiceConfigurationExtensions
 {
-    public static IServiceCollection MinimalApiMediatRExtensions(this IServiceCollection services, Action<MinimalApiMediatRConfiguration> configure)
+    public static IServiceCollection MinimalApiMediatRExtensions(this IServiceCollection services, Action<MinimalApiMediatRConfiguration>? configure = null)
     {
         var configuration = new MinimalApiMediatRConfiguration();
-        configure(configuration);
+        configure?.Invoke(configuration);
 
         var registrationActions = new List<Action>
         {

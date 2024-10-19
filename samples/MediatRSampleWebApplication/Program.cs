@@ -70,7 +70,9 @@ builder.Services.AddMediatR(cfg =>
 });
 
 //Register MediatR services for Minimal API
-builder.Services.MinimalApiMediatRExtensions();
+builder.Services.MinimalApiMediatRExtensions(x=>{
+    x.UseRoleBasedPostProcessor = false;
+});
 
 var app = builder.Build();
 
