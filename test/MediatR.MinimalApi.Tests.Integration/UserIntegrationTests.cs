@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+using MediatR.MinimalApi.Tests.Integration.Extensions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -119,7 +120,7 @@ namespace MediatR.MinimalApi.Tests.Integration
         {
             //Arrange
             var client = _factory.CreateClient();
-            var token = GenerateJwtToken("TestIssuer", "TestAudience", "TestSuperSecretKeyThatIsAtLeast32CharactersLong");
+            var token = JwtExtensions.GenerateJwtToken("TestIssuer", "TestAudience", "TestSuperSecretKeyThatIsAtLeast32CharactersLong");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             //Act
@@ -142,21 +143,6 @@ namespace MediatR.MinimalApi.Tests.Integration
 
             //Assert
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        private string GenerateJwtToken(string issuer, string audience, string key)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

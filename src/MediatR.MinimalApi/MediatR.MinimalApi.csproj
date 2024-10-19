@@ -4,7 +4,7 @@
 		<Authors>Krzysztof Pajak</Authors>
 		<Copyright>Copyright Krzysztof Pajak</Copyright>
 		<Description>Extends Mediatr functionality for Minimal APIs in ASP.NET Core</Description>
-		<Version>0.0.2</Version>
+		<Version>0.0.3</Version>
 		<RepositoryUrl>https://github.com/KrzysztofPajak/MediatR.MinimalApi</RepositoryUrl>
 		<PackageLicenseUrl>https://github.com/KrzysztofPajak/MediatR.MinimalApi/blob/develop/LICENSE</PackageLicenseUrl>
 		<RepositoryType>Git</RepositoryType>
@@ -20,7 +20,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MediatR" Version="12.3.0" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />		
 	</ItemGroup>
 
