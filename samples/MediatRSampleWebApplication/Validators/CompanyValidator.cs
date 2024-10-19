@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using static MediatRSampleWebApplication.Commands.Roles.CreateCompany;
+using static MediatRSampleWebApplication.Commands.Companies.CreateCompany;
 
 namespace MediatRSampleWebApplication.Validators;
 public class CompanyValidator : AbstractValidator<CreateCompanyCommand>

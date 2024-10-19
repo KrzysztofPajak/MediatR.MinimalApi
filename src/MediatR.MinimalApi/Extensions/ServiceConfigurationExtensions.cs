@@ -14,8 +14,8 @@ public static class ServiceConfigurationExtensions
 
         var registrationActions = new List<Action>
         {
-            () => { if (configuration.UseValidationBehavior) services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>)); },
             () => { if (configuration.UseAuthorizationBehavior) services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>)); },
+            () => { if (configuration.UseValidationBehavior) services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>)); },
             () => { if (configuration.UseRoleBasedPostProcessor) {
                     services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
                     services.AddTransient(typeof(IRequestPostProcessor<,>), typeof(RoleBasedPostProcessor<,>)); }

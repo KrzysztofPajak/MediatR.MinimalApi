@@ -3,10 +3,10 @@ using MediatRSampleWebApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MediatRSampleWebApplication.Commands.Roles
+namespace MediatRSampleWebApplication.Commands.Companies
 {
     public static class CreateCompany
-    {
+    {        
         public record CreateCompanyRequest(string Name);
 
         [Authorize]

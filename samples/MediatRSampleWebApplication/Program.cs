@@ -1,5 +1,6 @@
 using FluentValidation;
 using MediatR.MinimalApi.Extensions;
+using MediatRSampleWebApplication.Commands.Companies;
 using MediatRSampleWebApplication.Commands.Roles;
 using MediatRSampleWebApplication.EndpointFilters;
 using MediatRSampleWebApplication.Models;

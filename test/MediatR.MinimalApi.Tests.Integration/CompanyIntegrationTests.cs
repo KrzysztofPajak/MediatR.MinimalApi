@@ -26,7 +26,7 @@ public class CompanyIntegrationTests : IClassFixture<CustomWebApplicationFactory
         var client = _factory.CreateClient();
         var createCompanyModel = new
         {
-            Name = "TestRoleName"
+            Name = "TestRoleTestName"
         };
 
         //Act
