@@ -10,13 +10,13 @@ namespace MediatRSampleWebApplication.Commands.Roles
         public record CreateCompanyRequest(string Name);
 
         [Authorize]
-        public record CreateCompanyCommand([FromBody] CreateCompanyRequest Role) : IRequest<Company>;
+        public record CreateCompanyCommand([FromBody] CreateCompanyRequest Company) : IRequest<Company>;
 
         public class Handler : IRequestHandler<CreateCompanyCommand, Company>
         {
             public Task<Company> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
             {
-                var company = new Company { Name = request.Role.Name, Balance = 0 };
+                var company = new Company { Name = request.Company.Name, Balance = 0 };
                 return Task.FromResult(company);
             }
         }

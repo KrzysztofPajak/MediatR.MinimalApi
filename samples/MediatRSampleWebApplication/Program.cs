@@ -1,7 +1,9 @@
+using FluentValidation;
 using MediatR.MinimalApi.Extensions;
 using MediatRSampleWebApplication.Commands.Roles;
 using MediatRSampleWebApplication.EndpointFilters;
 using MediatRSampleWebApplication.Models;
+using MediatRSampleWebApplication.Queries.Companies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.IdentityModel.Tokens;
@@ -42,6 +44,15 @@ builder.Services.AddSwaggerGen(options =>
             }
     });
 });
+
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+//ignore null values in json serialization
+builder.Services.Configure<JsonOptions>(options =>
+ {
+     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+ });
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

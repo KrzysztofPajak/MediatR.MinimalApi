@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using MediatRSampleWebApplication.Models;
 
-namespace MediatRSampleWebApplication.Commands.Roles;
+namespace MediatRSampleWebApplication.Queries.Companies;
 
 public static class GetCompany
 {
