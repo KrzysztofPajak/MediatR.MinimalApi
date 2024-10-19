@@ -1,11 +1,16 @@
+using FluentValidation;
 using MediatR.MinimalApi.Extensions;
+using MediatRSampleWebApplication.Commands.Companies;
 using MediatRSampleWebApplication.Commands.Roles;
 using MediatRSampleWebApplication.EndpointFilters;
 using MediatRSampleWebApplication.Models;
+using MediatRSampleWebApplication.Queries.Companies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
@@ -41,6 +46,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+//ignore null values in json serialization
+builder.Services.Configure<JsonOptions>(options =>
+ {
+     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+ });
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -62,7 +76,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddTransient<ValidationFilter>();
 
 // Register MediatR services
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+});
+
+//Register MediatR services for Minimal API
+builder.Services.MinimalApiMediatRExtensions();
 
 var app = builder.Build();
 
@@ -117,6 +137,23 @@ app.MapDeleteWithMediatR<DeleteRole.DeleteRoleCommand, bool>("/role/delete/{Id}"
     .WithOpenApi(x =>
     {
         x.Tags = [new OpenApiTag() { Name = "Role" }];
+        return x;
+    });
+
+
+app.MapPostWithMediatR<CreateCompany.CreateCompanyCommand, Company>("/company/create")
+    .WithDisplayName("CreateCompany")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Company" }];
+        return x;
+    });
+
+app.MapGetWithMediatR<GetCompany.Companies, IList<Company>>("/company/get")
+    .WithDisplayName("GetCompanies")
+    .WithOpenApi(x =>
+    {
+        x.Tags = [new OpenApiTag() { Name = "Company" }];
         return x;
     });
 
