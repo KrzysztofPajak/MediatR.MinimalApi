@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using MediatR.MinimalApi.Exceptions;
 
 namespace MediatR.MinimalApi.Behaviors;
@@ -26,11 +25,5 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         }
 
         return await next();
-    }
-
-    private static string BuildErrorMessage(IEnumerable<ValidationFailure> errors)
-    {
-        IEnumerable<string> values = errors.Select((ValidationFailure x) => $"{Environment.NewLine} -- {x.PropertyName}: {x.ErrorMessage} Severity: {x.Severity.ToString()}");
-        return "Validation failed: " + string.Join(string.Empty, values);
     }
 }

@@ -27,7 +27,7 @@ namespace MediatR.MinimalApi.Extensions
 
             if (!string.IsNullOrEmpty(attribute!.TagName))
             {
-                operation.Tags = [new() { Name = attribute.TagName }];
+                builder.WithTags(attribute!.TagName);
             }
 
             switch (attribute.Method)
