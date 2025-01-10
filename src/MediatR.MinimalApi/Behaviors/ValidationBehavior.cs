@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using MediatR.MinimalApi.Exceptions;
 
 namespace MediatR.MinimalApi.Behaviors;

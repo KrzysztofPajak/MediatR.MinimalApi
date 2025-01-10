@@ -22,7 +22,6 @@ builder.Services.AddOpenApi("v1", options =>
 {
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-
 });
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
@@ -32,7 +31,6 @@ builder.Services.Configure<JsonOptions>(options =>
  {
      options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
  });
-
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -81,7 +79,6 @@ if (app.Environment.IsDevelopment())
 // Register MediatR endpoints (based on attributes Endpoint)
 app.MapMediatREndpoints(typeof(Program).Assembly);
 
-
 // Register MediatR endpoints (based on manual registration)
 app.MapPostWithMediatR<CreateRole.CreateRoleCommand, Role>("/role/create")
     .WithDisplayName("CreateRole")
@@ -103,15 +100,14 @@ app.MapDeleteWithMediatR<DeleteRole.DeleteRoleCommand, bool>("/role/delete/{Id}"
     .WithDisplayName("DeleteRole")
     .WithTags("Role");
 
-
 app.MapPostWithMediatR<CreateCompany.CreateCompanyCommand, Company>("/company/create")
     .WithDisplayName("CreateCompany")
     .WithTags("Company");
 
-
 app.MapGetWithMediatR<GetCompany.Companies, IList<Company>>("/company/get")
     .WithDisplayName("GetCompanies")
     .WithTags("Company");
+
 
 app.Run();
 
